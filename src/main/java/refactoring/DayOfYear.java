@@ -13,6 +13,8 @@ package refactoring;
  */
 public class DayOfYear {
 
+    private static final int[] DAYS_IN_MONTH = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
     /**
      * "The day of year (DOY) is the sequential day number starting with day 1 on
      * January 1st."
@@ -41,30 +43,31 @@ public class DayOfYear {
          * parameters, return type).
          */
 
-        if (month == 2) {
-            dayOfMonth += 31;
-        } else if (month == 3) {
-            dayOfMonth += 59;
-        } else if (month == 4) {
-            dayOfMonth += 90;
-        } else if (month == 5) {
-            dayOfMonth += 31 + 28 + 31 + 30;
-        } else if (month == 6) {
-            dayOfMonth += 31 + 28 + 31 + 30 + 31;
-        } else if (month == 7) {
-            dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30;
-        } else if (month == 8) {
-            dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31;
-        } else if (month == 9) {
-            dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31;
-        } else if (month == 10) {
-            dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30;
-        } else if (month == 11) {
-            dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31;
-        } else if (month == 12) {
-            dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 31;
+        if (month < 1 || month > 12){
+            throw new IllegalArgumentException("There are 12 months in a year, enter between 1-12" + month);
+        }
+        if (dayOfMonth < 1 || dayOfMonth > daysInMonth(month, year)){
+            throw new IllegalArgumentException("Invalid day " + dayOfMonth + " for month " + month + " of year " + year);
         }
 
-        return dayOfMonth;
+        int dayOfYear = dayOfMonth;
+
+        for (int earlierMonth = 1; earlierMonth < month; earlierMonth++) {
+            dayOfYear += daysInMonth(earlierMonth, year);
+        }
+        
+        return dayOfYear;
+    }
+
+    private static int daysInMonth(int month, int year){
+        if (month == 2 && isLeapYear(year)){
+            return 29;
+        }
+        return DAYS_IN_MONTH[month - 1];
+ 
+    }
+
+    private static boolean isLeapYear(int year){
+        return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
     }
 }
